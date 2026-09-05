@@ -4,11 +4,12 @@ A lightweight, zero-dependency sales notification popup plugin for WooCommerce s
 
 ## Key Features
 
+- **Built-in Admin Dashboard:** Fully configurable via **WooCommerce > Social Proof** with color pickers, font controls, and timing adjustments.
 - **UTC Timezone Accuracy:** Matches WooCommerce order creation timestamps directly against UTC `time()` to eliminate negative or skewed "minutes ago" calculations across any server timezone.
-- **Low Database Overhead:** Employs a 5-minute WordPress transient cache (`wclsp_social_proof_cache`) so repetitive page loads do not hammer the database with repeated queries.
+- **Low Database Overhead:** Employs a customizable WordPress transient cache (`wclsp_social_proof_cache`) so repetitive page loads do not hammer the database.
+- **Dynamic CSS Variables:** Styles and colors update instantly without recompiling or loading external bloat.
 - **Conditional Asset Loading:** Styles and scripts are only queued on targeted storefront pages (`is_front_page()`, `is_shop()`, `is_product_taxonomy()`).
 - **Security Hardened:** All AJAX requests are nonce-protected (`check_ajax_referer`) and buyer display fields are sanitized and escaped before rendering.
-- **Modern Glassmorphic UI:** Sleek, responsive popup UI designed with onyx glassmorphism and subtle gold accent highlights.
 
 ## Repository Structure
 
@@ -20,6 +21,7 @@ woocommerce-lightweight-social-proof/
 │   └── js/
 │       └── social-proof.js
 ├── includes/
+│   ├── class-social-proof-admin.php
 │   └── class-social-proof-ajax.php
 ├── templates/
 │   └── popup-markup.php
@@ -35,7 +37,7 @@ woocommerce-lightweight-social-proof/
 Navigate to your WordPress plugin directory and clone the repository:
 ```bash
 cd /path/to/wordpress/wp-content/plugins/
-git clone https://github.com/your-username/woocommerce-lightweight-social-proof.git
+git clone [https://github.com/your-username/woocommerce-lightweight-social-proof.git](https://github.com/your-username/woocommerce-lightweight-social-proof.git)
 ```
 
 ### Method 2: Manual Zip Installation
@@ -51,18 +53,21 @@ wp plugin activate woocommerce-lightweight-social-proof
 
 ## Configuration & Behavior
 
-- **Trigger Delay:** The initial popup displays 6 seconds after DOM content is loaded.
-- **Display Duration:** Each notification remains visible for 6 seconds before fading out.
-- **Interval Timing:** Subsequent popups cycle at randomized delays between 15 and 30 seconds to maintain an organic browsing experience.
-- **Order Scope:** Queries up to 30 recent orders with `completed`, `on-hold`, or `processing` status within the last 48 hours.
-- **Cache Lifetime:** Order payload is cached in WordPress transient memory (`wclsp_social_proof_cache`) for **5 minutes** (`5 * MINUTE_IN_SECONDS`). This keeps timestamps accurate without repetitive SQL queries. Clear it instantly via WP-CLI:
-  ```bash
-  wp transient delete wclsp_social_proof_cache
-  ```
-- **Styling & Customization:** Located in `assets/css/social-proof.css`:
-  - **Color Scheme:** Deep onyx background (`rgba(21, 21, 21, 0.95)`) paired with metallic gold accents (`#D4AF37`) and emerald verification indicators (`#25D366`).
-  - **Visual Effects:** 10px backdrop Gaussian blur with cubic-bezier slide transitions.
-  - **Mobile Behavior:** Automatically converts from a pinned bottom-left card on desktop to a centered, full-width bottom sheet (above standard mobile navbars) under 768px.
+All settings can be configured in WP Admin under **WooCommerce > Social Proof**:
+
+- **Visual & Styling:**
+  - **Background Color:** Default `#151515` (deep onyx).
+  - **Text Color:** Default `#ffffff`.
+  - **Accent / Highlight Color:** Default `#D4AF37` (gold).
+  - **Verified Badge Color:** Default `#25D366` (emerald).
+  - **Font Family:** Inherits theme typography or custom fonts (e.g., `'Mulish', sans-serif`).
+- **Timing & Behavior:**
+  - **Initial Delay:** Seconds before the first popup triggers (default: 6s).
+  - **Display Duration:** Seconds each popup stays visible (default: 6s).
+  - **Interval Range:** Min and Max delay between subsequent popups (default: 15s to 30s).
+- **Query & Cache Settings:**
+  - **Order History Scope:** Hours of past order history to include (default: 48h).
+  - **Transient Cache Lifetime:** Cache duration in minutes (default: 5m). Saving settings automatically purges stale transients.
 
 ## License
 
