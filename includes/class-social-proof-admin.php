@@ -50,6 +50,7 @@ class WCLSP_Social_Proof_Admin {
             'sanitize_callback' => array( __CLASS__, 'sanitize_settings' ),
         ) );
 
+        // Visual & Styling Section
         add_settings_section(
             'wclsp_style_section',
             __( 'Visual & Styling', 'wc-lightweight-social-proof' ),
@@ -57,12 +58,37 @@ class WCLSP_Social_Proof_Admin {
             'wclsp-settings'
         );
 
-        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color' ) );
-        add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color' ) );
-        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color' ) );
-        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color' ) );
-        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'e.g. "Mulish", sans-serif or leave as inherit' ) );
+        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array(
+            'id'      => 'bg_color',
+            'tooltip' => __( 'Background color of the popup card.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Supports dark and light themes. Default: #151515', 'wc-lightweight-social-proof' ),
+        ) );
 
+        add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array(
+            'id'      => 'text_color',
+            'tooltip' => __( 'Base font color for order descriptions and product titles.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Default: #ffffff', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array(
+            'id'      => 'accent_color',
+            'tooltip' => __( 'Color for buyer names, border accents, and links.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Default: #D4AF37 (Metallic Gold)', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array(
+            'id'      => 'badge_color',
+            'tooltip' => __( 'Color of the "Verified Buyer" tag indicator.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Default: #25D366 (Emerald Green)', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array(
+            'id'      => 'font_family',
+            'tooltip' => __( 'Specify an external or custom font stack, or inherit from your active WordPress theme.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Example: "Mulish", sans-serif or enter "inherit".', 'wc-lightweight-social-proof' ),
+        ) );
+
+        // Timing & Behavior Section
         add_settings_section(
             'wclsp_behavior_section',
             __( 'Timing & Behavior', 'wc-lightweight-social-proof' ),
@@ -70,11 +96,39 @@ class WCLSP_Social_Proof_Admin {
             'wclsp-settings'
         );
 
-        add_settings_field( 'initial_delay', __( 'Initial Delay (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'initial_delay', 'min' => 1, 'max' => 60 ) );
-        add_settings_field( 'display_duration', __( 'Display Duration (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'display_duration', 'min' => 2, 'max' => 30 ) );
-        add_settings_field( 'min_interval', __( 'Minimum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'min_interval', 'min' => 5, 'max' => 300 ) );
-        add_settings_field( 'max_interval', __( 'Maximum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'max_interval', 'min' => 5, 'max' => 300 ) );
+        add_settings_field( 'initial_delay', __( 'Initial Delay (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array(
+            'id'      => 'initial_delay',
+            'min'     => 1,
+            'max'     => 60,
+            'tooltip' => __( 'Wait time before the first popup triggers after page load.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Controls how many seconds to wait after DOM ready before presenting the first buyer alert.', 'wc-lightweight-social-proof' ),
+        ) );
 
+        add_settings_field( 'display_duration', __( 'Display Duration (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array(
+            'id'      => 'display_duration',
+            'min'     => 2,
+            'max'     => 30,
+            'tooltip' => __( 'How long each popup remains on screen before fading out.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Recommended: 5 to 8 seconds for comfortable reading.', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'min_interval', __( 'Minimum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array(
+            'id'      => 'min_interval',
+            'min'     => 5,
+            'max'     => 300,
+            'tooltip' => __( 'The minimum quiet pause between consecutive notifications.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Subsequent popups cycle at randomized times between Min and Max interval to keep notifications feeling organic.', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'max_interval', __( 'Maximum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array(
+            'id'      => 'max_interval',
+            'min'     => 5,
+            'max'     => 300,
+            'tooltip' => __( 'The maximum delay between subsequent popups.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Must be greater than or equal to Minimum Interval.', 'wc-lightweight-social-proof' ),
+        ) );
+
+        // Query & Cache Section
         add_settings_section(
             'wclsp_query_section',
             __( 'Query & Cache Settings', 'wc-lightweight-social-proof' ),
@@ -82,8 +136,21 @@ class WCLSP_Social_Proof_Admin {
             'wclsp-settings'
         );
 
-        add_settings_field( 'order_hours', __( 'Order History Scope (hours)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_hours', 'min' => 1, 'max' => 720 ) );
-        add_settings_field( 'cache_minutes', __( 'Transient Cache Lifetime (minutes)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'cache_minutes', 'min' => 1, 'max' => 120 ) );
+        add_settings_field( 'order_hours', __( 'Order History Scope (hours)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array(
+            'id'      => 'order_hours',
+            'min'     => 1,
+            'max'     => 720,
+            'tooltip' => __( 'How far back into your order history the engine queries.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'e.g., 48 fetches orders from the last 2 days. 168 fetches the last 7 days.', 'wc-lightweight-social-proof' ),
+        ) );
+
+        add_settings_field( 'cache_minutes', __( 'Transient Cache Lifetime (minutes)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array(
+            'id'      => 'cache_minutes',
+            'min'     => 1,
+            'max'     => 120,
+            'tooltip' => __( 'Duration order queries are cached in WordPress transient memory.', 'wc-lightweight-social-proof' ),
+            'desc'    => __( 'Caches recent orders to avoid repetitive database reads. Saving settings flushes this cache automatically.', 'wc-lightweight-social-proof' ),
+        ) );
     }
 
     public static function sanitize_settings( $input ) {
@@ -114,31 +181,60 @@ class WCLSP_Social_Proof_Admin {
         return $sanitized;
     }
 
+    public static function render_tooltip( $tooltip_text ) {
+        if ( empty( $tooltip_text ) ) {
+            return;
+        }
+        if ( function_exists( 'wc_help_tip' ) ) {
+            echo wc_help_tip( $tooltip_text );
+        } else {
+            echo ' <span class="dashicons dashicons-editor-help" title="' . esc_attr( $tooltip_text ) . '" style="cursor:help; vertical-align:middle; color:#646970;"></span>';
+        }
+    }
+
     public static function field_color( $args ) {
-        $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
-        echo '<input type="color" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" style="vertical-align:middle; width:50px; height:34px; padding:0; cursor:pointer;"> ';
-        echo '<input type="text" value="' . $val . '" style="width:90px; vertical-align:middle;" readonly>';
+        $opts    = self::get_options();
+        $id      = $args['id'];
+        $val     = esc_attr( $opts[ $id ] );
+        $tooltip = $args['tooltip'] ?? '';
+        $desc    = $args['desc'] ?? '';
+
+        echo '<input type="color" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" style="vertical-align:middle; width:46px; height:34px; padding:0; cursor:pointer;"> ';
+        echo '<input type="text" value="' . $val . '" style="width:85px; vertical-align:middle; text-transform:uppercase;" readonly>';
+        self::render_tooltip( $tooltip );
+        if ( ! empty( $desc ) ) {
+            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
+        }
     }
 
     public static function field_text( $args ) {
-        $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
-        echo '<input type="text" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="regular-text">';
-        if ( ! empty( $args['desc'] ) ) {
-            echo '<p class="description">' . esc_html( $args['desc'] ) . '</p>';
+        $opts    = self::get_options();
+        $id      = $args['id'];
+        $val     = esc_attr( $opts[ $id ] );
+        $tooltip = $args['tooltip'] ?? '';
+        $desc    = $args['desc'] ?? '';
+
+        echo '<input type="text" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="regular-text" style="vertical-align:middle;">';
+        self::render_tooltip( $tooltip );
+        if ( ! empty( $desc ) ) {
+            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
         }
     }
 
     public static function field_number( $args ) {
-        $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
-        $min  = isset( $args['min'] ) ? ' min="' . intval( $args['min'] ) . '"' : '';
-        $max  = isset( $args['max'] ) ? ' max="' . intval( $args['max'] ) . '"' : '';
-        echo '<input type="number" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="small-text"' . $min . $max . '>';
+        $opts    = self::get_options();
+        $id      = $args['id'];
+        $val     = esc_attr( $opts[ $id ] );
+        $min     = isset( $args['min'] ) ? ' min="' . intval( $args['min'] ) . '"' : '';
+        $max     = isset( $args['max'] ) ? ' max="' . intval( $args['max'] ) . '"' : '';
+        $tooltip = $args['tooltip'] ?? '';
+        $desc    = $args['desc'] ?? '';
+
+        echo '<input type="number" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="small-text" style="vertical-align:middle;"' . $min . $max . '>';
+        self::render_tooltip( $tooltip );
+        if ( ! empty( $desc ) ) {
+            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
+        }
     }
 
     public static function render_settings_page() {
@@ -148,7 +244,8 @@ class WCLSP_Social_Proof_Admin {
         ?>
         <div class="wrap">
             <h1><?php esc_html_e( 'WooCommerce Lightweight Social Proof Settings', 'wc-lightweight-social-proof' ); ?></h1>
-            <form action="options.php" method="post">
+            <p class="description"><?php esc_html_e( 'Configure visual styling, interval animations, and transient cache parameters for recent order alerts.', 'wc-lightweight-social-proof' ); ?></p>
+            <form action="options.php" method="post" style="margin-top: 15px;">
                 <?php
                 settings_fields( 'wclsp_settings_group' );
                 do_settings_sections( 'wclsp-settings' );
