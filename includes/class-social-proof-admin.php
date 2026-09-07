@@ -14,17 +14,17 @@ class WCLSP_Social_Proof_Admin {
 
     public static function get_defaults() {
         return array(
-            'bg_color'         => '#151515',
-            'text_color'       => '#ffffff',
-            'accent_color'     => '#D4AF37',
-            'badge_color'      => '#25D366',
-            'font_family'      => 'inherit',
-            'initial_delay'    => 6,
-            'display_duration' => 6,
-            'min_interval'     => 15,
-            'max_interval'     => 30,
-            'order_hours'      => 48,
-            'cache_minutes'    => 5,
+            'bg_color'          => '#151515',
+            'text_color'        => '#ffffff',
+            'accent_color'      => '#D4AF37',
+            'badge_color'       => '#25D366',
+            'font_family'       => 'inherit',
+            'initial_delay'     => 6,
+            'display_duration'  => 6,
+            'min_interval'      => 15,
+            'max_interval'      => 30,
+            'order_hours'       => 48,
+            'cache_minutes'     => 5,
         );
     }
 
@@ -57,11 +57,11 @@ class WCLSP_Social_Proof_Admin {
             'wclsp-settings'
         );
 
-        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color' ) );
-        add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color' ) );
-        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color' ) );
-        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color' ) );
-        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'e.g. "Mulish", sans-serif or leave as inherit' ) );
+        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color', 'desc' => 'Supports dark and light themes. Default: #151515' ) );
+        add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color', 'desc' => 'Default: #ffffff' ) );
+        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color', 'desc' => 'Default: #D4AF37 (Metallic Gold)' ) );
+        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color', 'desc' => 'Default: #25D366 (Emerald Green)' ) );
+        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'Example: "Mulish", sans-serif or enter "inherit".' ) );
 
         add_settings_section(
             'wclsp_behavior_section',
@@ -114,6 +114,17 @@ class WCLSP_Social_Proof_Admin {
         return $sanitized;
     }
 
+    public static function render_tooltip( $tooltip_text ) {
+        if ( empty( $tooltip_text ) ) {
+            return;
+        }
+        if ( function_exists( 'wc_help_tip' ) ) {
+            echo wc_help_tip( $tooltip_text );
+        } else {
+            echo ' <span class="dashicons dashicons-editor-help" title="' . esc_attr( $tooltip_text ) . '" style="cursor:help; vertical-align:middle; color:#646970;"></span>';
+        }
+    }
+
     public static function field_color( $args ) {
         $opts    = self::get_options();
         $id      = esc_attr( $args['id'] );
@@ -121,7 +132,7 @@ class WCLSP_Social_Proof_Admin {
         $tooltip = $args['tooltip'] ?? '';
         $desc    = $args['desc'] ?? '';
 
-        // Color picker element (swatch)
+        // Color picker swatch
         echo '<input type="color" id="' . $id . '_picker" value="' . $val . '" style="vertical-align:middle; width:44px; height:34px; padding:0; cursor:pointer;" oninput="document.getElementById(\'' . $id . '\').value = this.value.toUpperCase();"> ';
 
         // Editable text input for direct typing or pasting HEX codes
@@ -135,21 +146,21 @@ class WCLSP_Social_Proof_Admin {
 
     public static function field_text( $args ) {
         $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
-        echo '<input type="text" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="regular-text">';
+        $id   = esc_attr( $args['id'] );
+        $val  = esc_attr( $opts[ $id ] ?? '' );
+        echo '<input type="text" name="wclsp_settings[' . $id . ']" value="' . $val . '" class="regular-text">';
         if ( ! empty( $args['desc'] ) ) {
-            echo '<p class="description">' . esc_html( $args['desc'] ) . '</p>';
+            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $args['desc'] ) . '</p>';
         }
     }
 
     public static function field_number( $args ) {
         $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
+        $id   = esc_attr( $args['id'] );
+        $val  = esc_attr( $opts[ $id ] ?? '' );
         $min  = isset( $args['min'] ) ? ' min="' . intval( $args['min'] ) . '"' : '';
         $max  = isset( $args['max'] ) ? ' max="' . intval( $args['max'] ) . '"' : '';
-        echo '<input type="number" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" class="small-text"' . $min . $max . '>';
+        echo '<input type="number" name="wclsp_settings[' . $id . ']" value="' . $val . '" class="small-text"' . $min . $max . '>';
     }
 
     public static function render_settings_page() {
