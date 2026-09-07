@@ -115,11 +115,22 @@ class WCLSP_Social_Proof_Admin {
     }
 
     public static function field_color( $args ) {
-        $opts = self::get_options();
-        $id   = $args['id'];
-        $val  = esc_attr( $opts[ $id ] );
-        echo '<input type="color" name="wclsp_settings[' . esc_attr( $id ) . ']" value="' . $val . '" style="vertical-align:middle; width:50px; height:34px; padding:0; cursor:pointer;"> ';
-        echo '<input type="text" value="' . $val . '" style="width:90px; vertical-align:middle;" readonly>';
+        $opts    = self::get_options();
+        $id      = esc_attr( $args['id'] );
+        $val     = esc_attr( $opts[ $id ] ?? '#000000' );
+        $tooltip = $args['tooltip'] ?? '';
+        $desc    = $args['desc'] ?? '';
+
+        // Color picker element (swatch)
+        echo '<input type="color" id="' . $id . '_picker" value="' . $val . '" style="vertical-align:middle; width:44px; height:34px; padding:0; cursor:pointer;" oninput="document.getElementById(\'' . $id . '\').value = this.value.toUpperCase();"> ';
+
+        // Editable text input for direct typing or pasting HEX codes
+        echo '<input type="text" id="' . $id . '" name="wclsp_settings[' . $id . ']" value="' . $val . '" maxlength="7" placeholder="#000000" style="width:95px; vertical-align:middle; text-transform:uppercase; font-family:monospace; font-weight:600;" oninput="if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) { document.getElementById(\'' . $id . '_picker\').value = this.value; }">';
+
+        self::render_tooltip( $tooltip );
+        if ( ! empty( $desc ) ) {
+            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
+        }
     }
 
     public static function field_text( $args ) {
