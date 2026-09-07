@@ -55,15 +55,15 @@ add_action( 'wp_enqueue_scripts', function() {
             WCLSP_VERSION
         );
 
-        $bg          = esc_attr( $options['bg_color'] );
-        $text        = esc_attr( $options['text_color'] );
-        $accent      = esc_attr( $options['accent_color'] );
-        $badge       = esc_attr( $options['badge_color'] );
-        $font        = esc_attr( $options['font_family'] );
-        $pos_desk    = esc_attr( $options['position_desktop'] );
-        $offset_desk = intval( $options['bottom_offset_desk'] ) . 'px';
-        $offset_mob  = intval( $options['bottom_offset_mob'] ) . 'px';
-        $scale_mob   = ( floatval( $options['mobile_scale'] ) / 100 );
+        $bg          = esc_attr( $options['bg_color'] ?? '#151515' );
+        $text        = esc_attr( $options['text_color'] ?? '#ffffff' );
+        $accent      = esc_attr( $options['accent_color'] ?? '#D4AF37' );
+        $badge       = esc_attr( $options['badge_color'] ?? '#25D366' );
+        $font        = esc_attr( $options['font_family'] ?? 'inherit' );
+        $pos_desk    = esc_attr( $options['position_desktop'] ?? 'bottom-left' );
+        $offset_desk = intval( $options['bottom_offset_desk'] ?? 24 ) . 'px';
+        $offset_mob  = intval( $options['bottom_offset_mob'] ?? 75 ) . 'px';
+        $scale_mob   = ( floatval( $options['mobile_scale'] ?? 90 ) / 100 );
 
         $left_desk   = ( $pos_desk === 'bottom-left' ) ? '24px' : 'auto';
         $right_desk  = ( $pos_desk === 'bottom-right' ) ? '24px' : 'auto';
@@ -95,10 +95,10 @@ add_action( 'wp_enqueue_scripts', function() {
         wp_localize_script( 'wclsp-script', 'wclspData', array(
             'ajaxUrl'         => admin_url( 'admin-ajax.php' ),
             'nonce'           => wp_create_nonce( 'wclsp_sales_nonce' ),
-            'initialDelay'    => intval( $options['initial_delay'] ) * 1000,
-            'displayDuration' => intval( $options['display_duration'] ) * 1000,
-            'minInterval'     => intval( $options['min_interval'] ) * 1000,
-            'maxInterval'     => intval( $options['max_interval'] ) * 1000,
+            'initialDelay'    => intval( $options['initial_delay'] ?? 6 ) * 1000,
+            'displayDuration' => intval( $options['display_duration'] ?? 6 ) * 1000,
+            'minInterval'     => intval( $options['min_interval'] ?? 15 ) * 1000,
+            'maxInterval'     => intval( $options['max_interval'] ?? 30 ) * 1000,
         ));
     }
 });
@@ -109,3 +109,4 @@ add_action( 'wp_footer', function() {
         load_template( WCLSP_PATH . 'templates/popup-markup.php', false );
     }
 });
+

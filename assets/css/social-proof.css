@@ -135,10 +135,10 @@
         right: auto;
         max-width: calc(100vw - 24px);
         transform-origin: bottom left;
-        transform: scale(var(--wclsp-mob-scale, 0.9)) translateY(20px);
+        transform: translateY(20px) scale(var(--wclsp-mob-scale, 0.9));
     }
 
     .wclsp-toast.wclsp-show {
-        transform: scale(var(--wclsp-mob-scale, 0.9)) translateY(0);
+        transform: translateY(0) scale(var(--wclsp-mob-scale, 0.9));
     }
 }
