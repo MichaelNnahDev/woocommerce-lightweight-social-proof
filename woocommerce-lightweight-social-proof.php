@@ -18,11 +18,11 @@ define( 'WCLSP_VERSION', '1.2.0' );
 define( 'WCLSP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCLSP_URL', plugin_dir_url( __FILE__ ) );
 
-// Always load classes safely
+// Load classes
 require_once WCLSP_PATH . 'includes/class-social-proof-ajax.php';
 require_once WCLSP_PATH . 'includes/class-social-proof-admin.php';
 
-// Bootstrap
+// Safe Bootstrap
 add_action( 'plugins_loaded', 'wclsp_bootstrap_plugin' );
 
 function wclsp_bootstrap_plugin() {
@@ -39,39 +39,27 @@ function wclsp_bootstrap_plugin() {
     }
 }
 
-// Page detection helper
-function wclsp_is_target_page() {
-    if ( is_admin() ) {
+// Check if current frontend view is eligible
+function wclsp_should_run() {
+    if ( is_admin() || wp_doing_ajax() ) {
         return false;
     }
-    if ( is_front_page() || is_home() ) {
-        return true;
-    }
-    if ( function_exists( 'is_shop' ) && is_shop() ) {
-        return true;
-    }
-    if ( function_exists( 'is_product_taxonomy' ) && is_product_taxonomy() ) {
-        return true;
-    }
-    if ( function_exists( 'is_product' ) && is_product() ) {
-        return true;
-    }
-    return false;
+    return true;
 }
 
-// Enqueue frontend scripts & styles conditionally
+// Enqueue frontend scripts & styles unconditionally on frontend
 add_action( 'wp_enqueue_scripts', function() {
-    if ( ! wclsp_is_target_page() ) {
+    if ( ! wclsp_should_run() ) {
         return;
     }
 
-    $options = class_exists( 'WCLSP_Social_Proof_Admin' )
-        ? WCLSP_Social_Proof_Admin::get_options()
+    $options = class_exists( 'WCLSP_Social_Proof_Admin' ) 
+        ? WCLSP_Social_Proof_Admin::get_options() 
         : array();
 
-    $css_ver = file_exists( WCLSP_PATH . 'assets/css/social-proof.css' )
-        ? filemtime( WCLSP_PATH . 'assets/css/social-proof.css' )
-        : WCLSP_VERSION;
+    // Cache buster via filemtime
+    $css_path = WCLSP_PATH . 'assets/css/social-proof.css';
+    $css_ver  = file_exists( $css_path ) ? filemtime( $css_path ) : WCLSP_VERSION;
 
     wp_enqueue_style(
         'wclsp-styles',
@@ -109,9 +97,8 @@ add_action( 'wp_enqueue_scripts', function() {
     ";
     wp_add_inline_style( 'wclsp-styles', $custom_css );
 
-    $js_ver = file_exists( WCLSP_PATH . 'assets/js/social-proof.js' )
-        ? filemtime( WCLSP_PATH . 'assets/js/social-proof.js' )
-        : WCLSP_VERSION;
+    $js_path = WCLSP_PATH . 'assets/js/social-proof.js';
+    $js_ver  = file_exists( $js_path ) ? filemtime( $js_path ) : WCLSP_VERSION;
 
     wp_enqueue_script(
         'wclsp-script',
@@ -129,11 +116,11 @@ add_action( 'wp_enqueue_scripts', function() {
         'minInterval'     => intval( $options['min_interval'] ?? 15 ) * 1000,
         'maxInterval'     => intval( $options['max_interval'] ?? 30 ) * 1000,
     ));
-});
+}, 20 );
 
-// Render popup markup in footer only where needed
+// Render popup markup in footer
 add_action( 'wp_footer', function() {
-    if ( wclsp_is_target_page() ) {
+    if ( wclsp_should_run() ) {
         load_template( WCLSP_PATH . 'templates/popup-markup.php', false );
     }
-});
+}, 99 );
