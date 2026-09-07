@@ -3,7 +3,7 @@
  * Plugin Name: WooCommerce Lightweight Social Proof
  * Plugin URI:  https://github.com/MichaelNnahDev/woocommerce-lightweight-social-proof
  * Description: High-performance, zero-dependency sales popup notification system for WooCommerce.
- * Version:     1.1.0
+ * Version:     1.2.0
  * Author:      Michael Nnah
  * License:     GPL-2.0+
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-define( 'WCLSP_VERSION', '1.1.0' );
+define( 'WCLSP_VERSION', '1.2.0' );
 define( 'WCLSP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCLSP_URL', plugin_dir_url( __FILE__ ) );
 
