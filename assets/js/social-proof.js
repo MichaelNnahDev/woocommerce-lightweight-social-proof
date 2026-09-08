@@ -11,12 +11,13 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
     }
 
-    const imgEl      = document.getElementById('wclsp-popup-img');
-    const buyerName  = document.getElementById('wclsp-buyer-name');
-    const buyerLoc   = document.getElementById('wclsp-buyer-loc');
-    const prodName   = document.getElementById('wclsp-prod-name');
-    const timeAgo    = document.getElementById('wclsp-time-ago');
-    const closeBtn   = document.querySelector('.wclsp-close-btn');
+    const imgEl        = document.getElementById('wclsp-popup-img');
+    const buyerName    = document.getElementById('wclsp-buyer-name');
+    const countryBadge = document.getElementById('wclsp-country-badge');
+    const locPhrase    = document.getElementById('wclsp-location-phrase');
+    const prodLink     = document.getElementById('wclsp-prod-link');
+    const timeAgo      = document.getElementById('wclsp-time-ago');
+    const closeBtn     = document.querySelector('.wclsp-close-btn');
 
     let salesData = [];
     let currentIndex = 0;
@@ -32,24 +33,50 @@ document.addEventListener('DOMContentLoaded', function () {
     function renderItem(item) {
         if (!item || !popup) return;
 
+        // Image
         if (imgEl && item.image) {
             imgEl.src = item.image;
         }
-        if (buyerName && item.buyer_name) {
-            buyerName.textContent = item.buyer_name;
-        }
-        if (buyerLoc) {
-            buyerLoc.textContent = item.buyer_location ? ' in ' + item.buyer_location : '';
-        }
-        if (prodName && item.product_name) {
-            prodName.textContent = item.product_name;
-        }
-        if (timeAgo && item.time_ago) {
-            timeAgo.textContent = item.time_ago;
+
+        // Buyer Name (e.g. Fatima F.)
+        if (buyerName) {
+            buyerName.textContent = item.buyer_name || 'Someone';
         }
 
+        // Country shortcode / flag (e.g. NG)
+        if (countryBadge) {
+            if (item.country_code) {
+                countryBadge.textContent = (item.country_flag ? item.country_flag + ' ' : '') + item.country_code;
+                countryBadge.style.display = 'inline-block';
+            } else {
+                countryBadge.style.display = 'none';
+            }
+        }
+
+        // City Phrase (e.g. from Lagos)
+        if (locPhrase) {
+            if (item.city) {
+                locPhrase.innerHTML = ' <em>from ' + item.city + '</em> ';
+            } else {
+                locPhrase.innerHTML = ' ';
+            }
+        }
+
+        // Product smart title & link
+        if (prodLink) {
+            prodLink.textContent = item.product_title || '';
+            prodLink.href = item.product_url || '#';
+        }
+
+        // Time ago
+        if (timeAgo) {
+            timeAgo.textContent = item.time_ago || 'Just now';
+        }
+
+        // Trigger smooth slide-in
         popup.classList.add('wclsp-show');
 
+        // Hide after display duration
         setTimeout(function () {
             popup.classList.remove('wclsp-show');
             scheduleNext();
@@ -69,6 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, interval);
     }
 
+    // Fetch orders
     fetch(wclspData.ajaxUrl + '?action=wclsp_get_recent_sales&nonce=' + wclspData.nonce)
         .then(function (res) { return res.json(); })
         .then(function (res) {

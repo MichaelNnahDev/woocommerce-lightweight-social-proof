@@ -6,73 +6,126 @@ if ( ! defined( 'ABSPATH' ) ) {
 class WCLSP_Social_Proof_Ajax {
 
     public static function init() {
-        add_action( 'wp_ajax_wclsp_get_recent_sales', array( __CLASS__, 'get_sales_ajax' ) );
-        add_action( 'wp_ajax_nopriv_wclsp_get_recent_sales', array( __CLASS__, 'get_sales_ajax' ) );
+        add_action( 'wp_ajax_wclsp_get_recent_sales', array( __CLASS__, 'get_recent_sales' ) );
+        add_action( 'wp_ajax_nopriv_wclsp_get_recent_sales', array( __CLASS__, 'get_recent_sales' ) );
     }
 
-    public static function get_sales_ajax() {
+    public static function get_recent_sales() {
         check_ajax_referer( 'wclsp_sales_nonce', 'nonce' );
 
-        $data = self::fetch_recent_orders();
-        wp_send_json_success( $data );
-    }
+        $options     = class_exists( 'WCLSP_Social_Proof_Admin' ) ? WCLSP_Social_Proof_Admin::get_options() : array();
+        $order_hours = intval( $options['order_hours'] ?? 48 );
+        $cache_mins  = intval( $options['cache_minutes'] ?? 5 );
+        $cache_key   = 'wclsp_social_proof_cache';
 
-    public static function fetch_recent_orders() {
-        $cached_data = get_transient( 'wclsp_social_proof_cache' );
-        if ( false !== $cached_data ) {
-            return $cached_data;
+        $cached_data = get_transient( $cache_key );
+        if ( false !== $cached_data && is_array( $cached_data ) && ! empty( $cached_data ) ) {
+            wp_send_json_success( $cached_data );
         }
 
-        $options     = WCLSP_Social_Proof_Admin::get_options();
-        $order_hours = intval($options['order_hours'] );
-        $cache_mins  = intval($options['cache_minutes'] );
+        // Query completed orders within lookback period
+        $lookback_time = gmdate( 'Y-m-d H:i:s', time() - ( $order_hours * HOUR_IN_SECONDS ) );
 
-        $args = array(
-            'limit'        => 30,
-            'status'       => array( 'completed', 'on-hold', 'processing' ),
+        $orders = wc_get_orders( array(
+            'limit'        => 15,
+            'status'       => array( 'wc-completed', 'wc-processing' ),
+            'date_created' => '>=' . $lookback_time,
             'orderby'      => 'date',
             'order'        => 'DESC',
-            'date_created' => '>=' . gmdate( 'Y-m-d H:i:s', strtotime( "-{$order_hours} hours" ) ),
-        );
+            'return'       => 'objects',
+        ) );
 
-        $orders     = wc_get_orders( $args );$sales_data = array();
-
-        if ( ! empty( $orders ) ) {
-            foreach ( $orders as$order ) {
-                $first_name =$order->get_billing_first_name();
-                $city       =$order->get_billing_city();
-                $order_date =$order->get_date_created();
-
-                if ( ! $order_date ) {
-                    continue;
-                }
-
-                $items =$order->get_items();
-                if ( empty( $items ) ) {
-                    continue;
-                }
-
-                $item    = reset($items );
-                $product =$item->get_product();
-                if ( ! $product ) {
-                    continue;
-                }
-
-                $image_id  = $product->get_image_id();$image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'thumbnail' ) : wc_placeholder_img_src();
-
-                if ( ! empty( $first_name ) && ! empty( $city ) ) {$sales_data[] = array(
-                        'name'     => esc_html( ucfirst( sanitize_text_field( $first_name ) ) ),
-                        'location' => esc_html( ucwords( sanitize_text_field( $city ) ) ),
-                        'product'  => esc_html( $product->get_name() ),
-                        'image'    => esc_url( $image_url ),
-                        'time'     => human_time_diff( $order_date->getTimestamp(), time() ) . ' ago',
-                    );
-                }
-            }
+        // If no orders in window, fallback to recent 10 completed orders to avoid an empty card
+        if ( empty( $orders ) ) {
+            $orders = wc_get_orders( array(
+                'limit'   => 10,
+                'status'  => array( 'wc-completed', 'wc-processing' ),
+                'orderby' => 'date',
+                'order'   => 'DESC',
+                'return'  => 'objects',
+            ) );
         }
 
-        set_transient( 'wclsp_social_proof_cache', $sales_data,$cache_mins * MINUTE_IN_SECONDS );
+        $sales_data = array();
 
-        return $sales_data;
+        foreach ( $orders as $order ) {
+            if ( ! is_a( $order, 'WC_Order' ) ) {
+                continue;
+            }
+
+            // Buyer Name formatting: "First L."
+            $first_name = trim( $order->get_billing_first_name() );
+            $last_name  = trim( $order->get_billing_last_name() );
+
+            if ( empty( $first_name ) ) {
+                $buyer_name = __( 'Someone', 'wc-lightweight-social-proof' );
+            } elseif ( ! empty( $last_name ) ) {
+                $buyer_name = $first_name . ' ' . mb_substr( $last_name, 0, 1 ) . '.';
+            } else {
+                $buyer_name = $first_name;
+            }
+
+            // Location formatting
+            $city         = trim( $order->get_shipping_city() ?: $order->get_billing_city() );
+            $country_code = strtoupper( trim( $order->get_shipping_country() ?: $order->get_billing_country() ) );
+
+            // Convert ISO-2 country code to emoji flag
+            $flag = '';
+            if ( strlen( $country_code ) === 2 ) {
+                $flag = mb_chr( ord( $country_code[0] ) - 65 + 0x1F1E6 ) . mb_chr( ord( $country_code[1] ) - 65 + 0x1F1E6 );
+            }
+
+            // Items & Smart Abbreviation
+            $items       = $order->get_items();
+            $items_count = count( $items );
+            if ( $items_count === 0 ) {
+                continue;
+            }
+
+            $first_item = reset( $items );
+            $product    = $first_item->get_product();
+            if ( ! $product ) {
+                continue;
+            }
+
+            $first_title = $first_item->get_name();
+            if ( $items_count > 1 ) {
+                $extra_items = $items_count - 1;
+                /* translators: 1: primary product name, 2: additional items count */
+                $product_label = sprintf(
+                    _n( '%1$s and %2$d other item', '%1$s and %2$d other items', $extra_items, 'wc-lightweight-social-proof' ),
+                    $first_title,
+                    $extra_items
+                );
+            } else {
+                $product_label = $first_title;
+            }
+
+            // Product Image
+            $image_id  = $product->get_image_id();
+            $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'thumbnail' ) : wc_placeholder_img_src( 'thumbnail' );
+
+            // Human Time Difference
+            $order_timestamp = $order->get_date_created() ? $order->get_date_created()->getTimestamp() : time();
+            $time_ago        = sprintf( __( '%s ago', 'wc-lightweight-social-proof' ), human_time_diff( $order_timestamp, current_time( 'timestamp' ) ) );
+
+            $sales_data[] = array(
+                'id'            => $order->get_id(),
+                'buyer_name'    => esc_html( $buyer_name ),
+                'city'          => esc_html( $city ),
+                'country_code'  => esc_html( $country_code ),
+                'country_flag'  => $flag,
+                'product_title' => esc_html( $product_label ),
+                'product_url'   => esc_url( $product->get_permalink() ),
+                'image'         => esc_url( $image_url ),
+                'time_ago'      => esc_html( $time_ago ),
+            );
+        }
+
+        if ( ! empty( $sales_data ) && $cache_mins > 0 ) {
+            set_transient( $cache_key, $sales_data, $cache_mins * MINUTE_IN_SECONDS );
+        }
+
+        wp_send_json_success( $sales_data );
     }
 }
