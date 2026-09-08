@@ -1,7 +1,7 @@
 === WooCommerce Lightweight Social Proof ===
-Contributors: MichaelNnahDev
-Donate link: https://michaelnnah.com/
-Tags: woocommerce, social proof, sales notification, fomo, live sales
+Contributors: michaelnnahdev
+Donate link: https://portfolio.michaelnnah.com/
+Tags: woocommerce, social-proof, sales-notification, fomo, conversion
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
@@ -16,6 +16,7 @@ Zero-dependency, high-performance sales notification popup system for WooCommerc
 Boost store trust and conversions with clean, non-intrusive recent order notifications. Designed specifically for stores requiring ultra-fast execution, zero external JS libraries, and total layout customization.
 
 = Key Features =
+
 * Native WooCommerce Integration: Automatically queries recent completed orders using standard WooCommerce CRUD methods.
 * Custom Positioning: Choose between Bottom Left and Bottom Right placement.
 * Mobile Clearance & Scaling: Adjust viewport offsets to cleanly clear floating WhatsApp buttons and sticky mobile menus.
@@ -31,10 +32,17 @@ Boost store trust and conversions with clean, non-intrusive recent order notific
 == Frequently Asked Questions ==
 
 = Does this plugin track personal customer data? =
+
 No. The plugin only displays customer first names and shipping cities from completed orders, with no sensitive billing details.
 
 = Will this slow down my store? =
+
 No. Recent order lookups are cached via WordPress transients, making queries virtually instantaneous.
+
+== Screenshots ==
+
+1. Frontend social proof notification banner floating above bottom navigation.
+2. Position and layout controls inside WooCommerce settings dashboard.
 
 == Changelog ==
 
