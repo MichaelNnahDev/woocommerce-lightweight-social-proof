@@ -10,6 +10,17 @@ class WCLSP_Social_Proof_Admin {
     public static function init() {
         add_action( 'admin_menu', array( __CLASS__, 'add_settings_page' ) );
         add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
+        add_action( 'admin_init', array( __CLASS__, 'handle_dismiss_optin' ) );
+    }
+
+    public static function handle_dismiss_optin() {
+        if ( isset( $_GET['wclsp_dismiss_optin'] ) && check_admin_referer( 'wclsp_dismiss_optin_nonce' ) ) {
+            if ( current_user_can( 'manage_woocommerce' ) ) {
+                update_user_meta( get_current_user_id(), 'wclsp_optin_dismissed', 1 );
+                wp_safe_redirect( remove_query_arg( array( 'wclsp_dismiss_optin', '_wpnonce' ) ) );
+                exit;
+            }
+        }
     }
 
     public static function get_defaults() {
@@ -28,7 +39,7 @@ class WCLSP_Social_Proof_Admin {
             'min_interval'       => 15,
             'max_interval'       => 30,
             'order_hours'        => 48,
-            'order_statuses'     => array( 'wc-on-hold' ), // Default: on-hold
+            'order_statuses'     => array( 'wc-on-hold' ),
             'cache_minutes'      => 5,
         );
     }
@@ -120,8 +131,7 @@ class WCLSP_Social_Proof_Admin {
         $sanitized['max_interval']       = absint( $input['max_interval'] ?? $defaults['max_interval'] );
         $sanitized['order_hours']        = absint( $input['order_hours'] ?? $defaults['order_hours'] );
 
-        // Sanitize selected order statuses
-        $allowed_statuses = array( 'wc-on-hold', 'wc-pending', 'wc-processing', 'wc-completed' );
+        $allowed_statuses  = array( 'wc-on-hold', 'wc-pending', 'wc-processing', 'wc-completed' );
         $selected_statuses = array();
         if ( ! empty( $input['order_statuses'] ) && is_array( $input['order_statuses'] ) ) {
             foreach ( $input['order_statuses'] as $status ) {
@@ -130,8 +140,7 @@ class WCLSP_Social_Proof_Admin {
                 }
             }
         }
-        $sanitized['order_statuses'] = ! empty( $selected_statuses ) ? $selected_statuses : array( 'wc-on-hold' );
-
+        $sanitized['order_statuses'] = ! empty( $selected_statuses) ? $selected_statuses : array( 'wc-on-hold' );
         $sanitized['cache_minutes']  = absint( $input['cache_minutes'] ?? $defaults['cache_minutes'] );
 
         delete_transient( 'wclsp_social_proof_cache' );
@@ -211,9 +220,57 @@ class WCLSP_Social_Proof_Admin {
         if ( ! current_user_can( 'manage_woocommerce' ) ) {
             return;
         }
+
+        $is_dismissed = get_user_meta( get_current_user_id(), 'wclsp_optin_dismissed', true );
+        $current_user = wp_get_current_user();
+        $site_domain  = wp_parse_url( home_url(), PHP_URL_HOST );
+        $dismiss_url  = wp_nonce_url( add_query_arg( 'wclsp_dismiss_optin', '1' ), 'wclsp_dismiss_optin_nonce' );
         ?>
-        <div class="wrap">
-            <h1><?php esc_html_e( 'WooCommerce Lightweight Social Proof Settings', 'wc-lightweight-social-proof' ); ?></h1>
+        <div class="wrap" style="max-width: 900px;">
+            <h1><?php esc_html_e( 'WooCommerce Sales Popup Settings', 'wc-lightweight-social-proof' ); ?></h1>
+
+            <?php if ( ! $is_dismissed ) : ?>
+                <!-- Optional, 100% WordPress.org Compliant Opt-In Card -->
+                <div class="wclsp-optin-card" style="margin: 20px 0 25px; padding: 22px 24px; background: #ffffff; border: 1px solid #c7d2fe; border-left: 4px solid #4f46e5; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative;">
+                    
+                    <a href="<?php echo esc_url( $dismiss_url ); ?>" title="<?php esc_attr_e( 'Dismiss this notice', 'wc-lightweight-social-proof' ); ?>" style="position: absolute; top: 14px; right: 16px; text-decoration: none; color: #94a3b8; font-size: 18px; font-weight: 700; line-height: 1;">&times;</a>
+
+                    <div style="display: flex; gap: 14px; align-items: flex-start;">
+                        <span style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #eef2ff; color: #4f46e5; border-radius: 8px; font-size: 20px; flex-shrink: 0;">⚡</span>
+                        <div style="flex-grow: 1;">
+                            <h2 style="margin: 0 0 6px; font-size: 16px; font-weight: 700; color: #0f172a;">
+                                <?php esc_html_e( 'Get Free Styling Presets & Feature Updates', 'wc-lightweight-social-proof' ); ?>
+                            </h2>
+                            <p style="margin: 0 0 14px; font-size: 13px; line-height: 1.5; color: #475569;">
+                                <?php esc_html_e( 'Optional: Join the developer updates list to receive curated CSS styling presets, conversion optimization guides, and early access to new feature releases.', 'wc-lightweight-social-proof' ); ?>
+                            </p>
+
+                            <!-- External Webhook or Newsletter Endpoint -->
+                            <form method="POST" action="https://formspree.io/f/YOUR_FORM_ID" target="_blank" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                                <input type="text" name="name" value="<?php echo esc_attr( $current_user->display_name ); ?>" placeholder="<?php esc_attr_e( 'Your Name', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 170px;">
+                                
+                                <input type="email" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>" placeholder="<?php esc_attr_e( 'Your Email', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
+                                
+                                <input type="hidden" name="domain" value="<?php echo esc_attr( $site_domain ); ?>">
+                                <input type="hidden" name="plugin_version" value="1.2.0">
+
+                                <button type="submit" class="button button-primary" style="height: 36px; line-height: 34px; padding: 0 16px; background: #4f46e5; border-color: #4f46e5; font-weight: 600;">
+                                    <?php esc_html_e( 'Send Free Presets', 'wc-lightweight-social-proof' ); ?>
+                                </button>
+                                
+                                <a href="<?php echo esc_url( $dismiss_url ); ?>" class="button button-secondary" style="height: 36px; line-height: 34px; padding: 0 14px; color: #64748b;">
+                                    <?php esc_html_e( 'No thanks, skip', 'wc-lightweight-social-proof' ); ?>
+                                </a>
+                            </form>
+                            
+                            <p style="margin: 8px 0 0; font-size: 11px; color: #94a3b8;">
+                                <?php esc_html_e( '🔒 We respect your privacy. No spam. You can unsubscribe at any time.', 'wc-lightweight-social-proof' ); ?>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            <?php endif; ?>
+
             <form action="options.php" method="post">
                 <?php
                 settings_fields( 'wclsp_settings_group' );
