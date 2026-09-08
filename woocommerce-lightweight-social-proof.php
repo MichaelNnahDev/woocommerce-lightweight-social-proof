@@ -1,13 +1,17 @@
 <?php
 /**
- * Plugin Name: WooCommerce Lightweight Social Proof
- * Plugin URI:  https://github.com/MichaelNnahDev/woocommerce-lightweight-social-proof
- * Description: High-performance, zero-dependency sales popup notification system for WooCommerce.
- * Version:     1.2.0
- * Author:      Michael Nnah
- * License:     GPL-2.0+
- * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: wc-lightweight-social-proof
+ * Plugin Name:       WooCommerce Sales Popup – Lightweight Live Sales Notification & Social Proof
+ * Plugin URI:        https://wclsp.michaelnnah.com/
+ * Description:       Fast, zero-bloat sales notification popup for WooCommerce. Displays recent orders with smart item bundling and customizable viewport clearance.
+ * Version:           1.2.0
+ * Author:            Michael Nnah
+ * Author URI:        https://michaelnnah.com/
+ * Text Domain:       wc-lightweight-social-proof
+ * Domain Path:       /languages
+ * Requires at least: 6.0
+ * Requires PHP:      7.4
+ * License:           GPLv2 or later
+ * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

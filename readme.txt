@@ -1,7 +1,7 @@
-=== WooCommerce Lightweight Social Proof ===
+=== WooCommerce Sales Popup – Lightweight Live Sales Notification & Social Proof ===
 Contributors: michaelnnahdev
 Donate link: https://portfolio.michaelnnah.com/
-Tags: woocommerce, social-proof, sales-notification, fomo, conversion
+Tags: sales-popup, sales-notification, woocommerce, social-proof, recent-sales
 Requires at least: 6.0
 Tested up to: 6.8
 Requires PHP: 7.4
