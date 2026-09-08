@@ -23,7 +23,7 @@ class WCLSP_Social_Proof_Ajax {
             wp_send_json_success( $cached_data );
         }
 
-        // Query completed orders within lookback period
+        // Query completed / processing orders
         $lookback_time = gmdate( 'Y-m-d H:i:s', time() - ( $order_hours * HOUR_IN_SECONDS ) );
 
         $orders = wc_get_orders( array(
@@ -35,7 +35,7 @@ class WCLSP_Social_Proof_Ajax {
             'return'       => 'objects',
         ) );
 
-        // If no orders in window, fallback to recent 10 completed orders to avoid an empty card
+        // If no orders within window, fallback to most recent orders
         if ( empty( $orders ) ) {
             $orders = wc_get_orders( array(
                 'limit'   => 10,
@@ -69,12 +69,6 @@ class WCLSP_Social_Proof_Ajax {
             $city         = trim( $order->get_shipping_city() ?: $order->get_billing_city() );
             $country_code = strtoupper( trim( $order->get_shipping_country() ?: $order->get_billing_country() ) );
 
-            // Convert ISO-2 country code to emoji flag
-            $flag = '';
-            if ( strlen( $country_code ) === 2 ) {
-                $flag = mb_chr( ord( $country_code[0] ) - 65 + 0x1F1E6 ) . mb_chr( ord( $country_code[1] ) - 65 + 0x1F1E6 );
-            }
-
             // Items & Smart Abbreviation
             $items       = $order->get_items();
             $items_count = count( $items );
@@ -105,16 +99,30 @@ class WCLSP_Social_Proof_Ajax {
             $image_id  = $product->get_image_id();
             $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'thumbnail' ) : wc_placeholder_img_src( 'thumbnail' );
 
-            // Human Time Difference
-            $order_timestamp = $order->get_date_created() ? $order->get_date_created()->getTimestamp() : time();
-            $time_ago        = sprintf( __( '%s ago', 'wc-lightweight-social-proof' ), human_time_diff( $order_timestamp, current_time( 'timestamp' ) ) );
+            // Time difference calculation with smart cap
+            $order_date = $order->get_date_created();
+            $now        = time();
+            $diff       = $order_date ? ( $now - $order_date->getTimestamp() ) : 0;
+
+            if ( $diff < 3600 ) {
+                $mins     = max( 1, round( $diff / 60 ) );
+                $time_ago = sprintf( _n( '%d minute ago', '%d minutes ago', $mins, 'wc-lightweight-social-proof' ), $mins );
+            } elseif ( $diff < 86400 ) {
+                $hours    = round( $diff / 3600 );
+                $time_ago = sprintf( _n( '%d hour ago', '%d hours ago', $hours, 'wc-lightweight-social-proof' ), $hours );
+            } elseif ( $diff < ( 86400 * 7 ) ) {
+                $days     = round( $diff / 86400 );
+                $time_ago = sprintf( _n( '%d day ago', '%d days ago', $days, 'wc-lightweight-social-proof' ), $days );
+            } else {
+                // If the order is older than 7 days, don't broadcast "1 year ago"
+                $time_ago = __( 'Recently', 'wc-lightweight-social-proof' );
+            }
 
             $sales_data[] = array(
                 'id'            => $order->get_id(),
                 'buyer_name'    => esc_html( $buyer_name ),
                 'city'          => esc_html( $city ),
                 'country_code'  => esc_html( $country_code ),
-                'country_flag'  => $flag,
                 'product_title' => esc_html( $product_label ),
                 'product_url'   => esc_url( $product->get_permalink() ),
                 'image'         => esc_url( $image_url ),

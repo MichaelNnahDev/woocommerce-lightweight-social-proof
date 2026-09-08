@@ -43,10 +43,10 @@ document.addEventListener('DOMContentLoaded', function () {
             buyerName.textContent = item.buyer_name || 'Someone';
         }
 
-        // Country shortcode / flag (e.g. NG)
+        // Clean single Country Code (e.g. NG)
         if (countryBadge) {
             if (item.country_code) {
-                countryBadge.textContent = (item.country_flag ? item.country_flag + ' ' : '') + item.country_code;
+                countryBadge.textContent = item.country_code;
                 countryBadge.style.display = 'inline-block';
             } else {
                 countryBadge.style.display = 'none';
@@ -68,12 +68,12 @@ document.addEventListener('DOMContentLoaded', function () {
             prodLink.href = item.product_url || '#';
         }
 
-        // Time ago
+        // Time ago (sanitized)
         if (timeAgo) {
-            timeAgo.textContent = item.time_ago || 'Just now';
+            timeAgo.textContent = item.time_ago || 'Recently';
         }
 
-        // Trigger smooth slide-in
+        // Show popup
         popup.classList.add('wclsp-show');
 
         // Hide after display duration
@@ -96,7 +96,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }, interval);
     }
 
-    // Fetch orders
+    // Fetch orders via AJAX
     fetch(wclspData.ajaxUrl + '?action=wclsp_get_recent_sales&nonce=' + wclspData.nonce)
         .then(function (res) { return res.json(); })
         .then(function (res) {
@@ -109,6 +109,6 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         })
         .catch(function (err) {
-            console.error('WCLSP Error:', err);
+            console.error('WCLSP Fetch error:', err);
         });
 });
