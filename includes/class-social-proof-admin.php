@@ -28,6 +28,7 @@ class WCLSP_Social_Proof_Admin {
             'min_interval'       => 15,
             'max_interval'       => 30,
             'order_hours'        => 48,
+            'order_statuses'     => array( 'wc-on-hold' ), // Default: on-hold
             'cache_minutes'      => 5,
         );
     }
@@ -56,11 +57,11 @@ class WCLSP_Social_Proof_Admin {
 
         // 1. Visual & Styling
         add_settings_section( 'wclsp_style_section', __( 'Visual & Styling', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
-        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color', 'desc' => 'Supports dark and light themes. Default: #151515' ) );
+        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color', 'desc' => 'Default: #151515' ) );
         add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color', 'desc' => 'Default: #ffffff' ) );
         add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color', 'desc' => 'Default: #D4AF37 (Metallic Gold)' ) );
-        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color', 'desc' => 'Default: #25D366 (Emerald Green)' ) );
-        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'Example: "Mulish", sans-serif or enter "inherit".' ) );
+        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color', 'desc' => 'Default: #25D366' ) );
+        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'e.g. "Mulish", sans-serif or "inherit"' ) );
 
         // 2. Position & Layout
         add_settings_section( 'wclsp_position_section', __( 'Position & Layout', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
@@ -70,26 +71,10 @@ class WCLSP_Social_Proof_Admin {
                 'bottom-left'  => __( 'Bottom Left', 'wc-lightweight-social-proof' ),
                 'bottom-right' => __( 'Bottom Right', 'wc-lightweight-social-proof' ),
             ),
-            'desc'    => 'Choose Bottom Left to avoid floating WhatsApp or chat buttons on the right.',
         ) );
-        add_settings_field( 'bottom_offset_desk', __( 'Desktop Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array(
-            'id'   => 'bottom_offset_desk',
-            'min'  => 0,
-            'max'  => 300,
-            'desc' => 'Distance from the bottom of desktop screens. Default: 24px.',
-        ) );
-        add_settings_field( 'bottom_offset_mob', __( 'Mobile Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array(
-            'id'   => 'bottom_offset_mob',
-            'min'  => 0,
-            'max'  => 300,
-            'desc' => 'Distance from the bottom on smartphones. Set to 75px - 85px to sit above sticky bottom navbars.',
-        ) );
-        add_settings_field( 'mobile_scale', __( 'Mobile Size Scale (%)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array(
-            'id'   => 'mobile_scale',
-            'min'  => 60,
-            'max'  => 110,
-            'desc' => 'Recommended: 85% to 90% for a sleek, compact card on mobile.',
-        ) );
+        add_settings_field( 'bottom_offset_desk', __( 'Desktop Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_desk', 'min' => 0, 'max' => 300 ) );
+        add_settings_field( 'bottom_offset_mob', __( 'Mobile Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_mob', 'min' => 0, 'max' => 300 ) );
+        add_settings_field( 'mobile_scale', __( 'Mobile Size Scale (%)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'mobile_scale', 'min' => 60, 'max' => 110 ) );
 
         // 3. Timing & Behavior
         add_settings_section( 'wclsp_behavior_section', __( 'Timing & Behavior', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
@@ -101,6 +86,7 @@ class WCLSP_Social_Proof_Admin {
         // 4. Query & Cache
         add_settings_section( 'wclsp_query_section', __( 'Query & Cache Settings', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
         add_settings_field( 'order_hours', __( 'Order History Scope (hours)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_hours', 'min' => 1, 'max' => 720 ) );
+        add_settings_field( 'order_statuses', __( 'Included Order Statuses', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_statuses' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_statuses' ) );
         add_settings_field( 'cache_minutes', __( 'Transient Cache Lifetime (minutes)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'cache_minutes', 'min' => 1, 'max' => 120 ) );
     }
 
@@ -133,35 +119,35 @@ class WCLSP_Social_Proof_Admin {
         $sanitized['min_interval']       = absint( $input['min_interval'] ?? $defaults['min_interval'] );
         $sanitized['max_interval']       = absint( $input['max_interval'] ?? $defaults['max_interval'] );
         $sanitized['order_hours']        = absint( $input['order_hours'] ?? $defaults['order_hours'] );
-        $sanitized['cache_minutes']      = absint( $input['cache_minutes'] ?? $defaults['cache_minutes'] );
+
+        // Sanitize selected order statuses
+        $allowed_statuses = array( 'wc-on-hold', 'wc-pending', 'wc-processing', 'wc-completed' );
+        $selected_statuses = array();
+        if ( ! empty( $input['order_statuses'] ) && is_array( $input['order_statuses'] ) ) {
+            foreach ( $input['order_statuses'] as $status ) {
+                if ( in_array( $status, $allowed_statuses, true ) ) {
+                    $selected_statuses[] = sanitize_text_field( $status );
+                }
+            }
+        }
+        $sanitized['order_statuses'] = ! empty( $selected_statuses ) ? $selected_statuses : array( 'wc-on-hold' );
+
+        $sanitized['cache_minutes']  = absint( $input['cache_minutes'] ?? $defaults['cache_minutes'] );
 
         delete_transient( 'wclsp_social_proof_cache' );
 
         return $sanitized;
     }
 
-    public static function render_tooltip( $tooltip_text ) {
-        if ( empty( $tooltip_text ) ) {
-            return;
-        }
-        if ( function_exists( 'wc_help_tip' ) ) {
-            echo wc_help_tip( $tooltip_text );
-        } else {
-            echo ' <span class="dashicons dashicons-editor-help" title="' . esc_attr( $tooltip_text ) . '" style="cursor:help; vertical-align:middle; color:#646970;"></span>';
-        }
-    }
-
     public static function field_color( $args ) {
-        $opts    = self::get_options();
-        $id      = esc_attr( $args['id'] );
-        $val     = esc_attr( $opts[ $id ] ?? '#000000' );
-        $tooltip = $args['tooltip'] ?? '';
-        $desc    = $args['desc'] ?? '';
+        $opts = self::get_options();
+        $id   = esc_attr( $args['id'] );
+        $val  = esc_attr( $opts[ $id ] ?? '#000000' );
+        $desc = $args['desc'] ?? '';
 
         echo '<input type="color" id="' . $id . '_picker" value="' . $val . '" style="vertical-align:middle; width:44px; height:34px; padding:0; cursor:pointer;" oninput="document.getElementById(\'' . $id . '\').value = this.value.toUpperCase();"> ';
         echo '<input type="text" id="' . $id . '" name="wclsp_settings[' . $id . ']" value="' . $val . '" maxlength="7" placeholder="#000000" style="width:95px; vertical-align:middle; text-transform:uppercase; font-family:monospace; font-weight:600;" oninput="if (/^#[0-9A-Fa-f]{6}$/.test(this.value)) { document.getElementById(\'' . $id . '_picker\').value = this.value; }">';
 
-        self::render_tooltip( $tooltip );
         if ( ! empty( $desc ) ) {
             echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
         }
@@ -172,17 +158,12 @@ class WCLSP_Social_Proof_Admin {
         $id      = esc_attr( $args['id'] );
         $val     = esc_attr( $opts[ $id ] ?? 'bottom-left' );
         $options = $args['options'] ?? array();
-        $desc    = $args['desc'] ?? '';
 
         echo '<select id="' . $id . '" name="wclsp_settings[' . $id . ']" style="vertical-align:middle;">';
         foreach ( $options as $key => $label ) {
             echo '<option value="' . esc_attr( $key ) . '" ' . selected( $val, $key, false ) . '>' . esc_html( $label ) . '</option>';
         }
         echo '</select>';
-
-        if ( ! empty( $desc ) ) {
-            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $desc ) . '</p>';
-        }
     }
 
     public static function field_text( $args ) {
@@ -202,9 +183,28 @@ class WCLSP_Social_Proof_Admin {
         $min  = isset( $args['min'] ) ? ' min="' . intval( $args['min'] ) . '"' : '';
         $max  = isset( $args['max'] ) ? ' max="' . intval( $args['max'] ) . '"' : '';
         echo '<input type="number" name="wclsp_settings[' . $id . ']" value="' . $val . '" class="small-text"' . $min . $max . '>';
-        if ( ! empty( $args['desc'] ) ) {
-            echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">' . esc_html( $args['desc'] ) . '</p>';
+    }
+
+    public static function field_statuses( $args ) {
+        $opts      = self::get_options();
+        $selected  = (array) ( $opts['order_statuses'] ?? array( 'wc-on-hold' ) );
+        $statuses  = array(
+            'wc-on-hold'    => __( 'On hold (Default)', 'wc-lightweight-social-proof' ),
+            'wc-pending'    => __( 'Pending payment', 'wc-lightweight-social-proof' ),
+            'wc-processing' => __( 'Processing', 'wc-lightweight-social-proof' ),
+            'wc-completed'  => __( 'Completed', 'wc-lightweight-social-proof' ),
+        );
+
+        echo '<fieldset style="display:flex; flex-direction:column; gap:6px;">';
+        foreach ( $statuses as $status_key => $label ) {
+            $checked = in_array( $status_key, $selected, true ) ? 'checked' : '';
+            echo '<label style="display:inline-flex; align-items:center; gap:8px;">';
+            echo '<input type="checkbox" name="wclsp_settings[order_statuses][]" value="' . esc_attr( $status_key ) . '" ' . $checked . '> ';
+            echo esc_html( $label );
+            echo '</label>';
         }
+        echo '<p class="description" style="margin-top:4px; font-size:12px; color:#646970;">Select which order stages are eligible to trigger social proof notifications.</p>';
+        echo '</fieldset>';
     }
 
     public static function render_settings_page() {
@@ -227,4 +227,3 @@ class WCLSP_Social_Proof_Admin {
 }
 
 endif;
-

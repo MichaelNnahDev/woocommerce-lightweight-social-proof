@@ -18,28 +18,33 @@ class WCLSP_Social_Proof_Ajax {
         $cache_mins  = intval( $options['cache_minutes'] ?? 5 );
         $cache_key   = 'wclsp_social_proof_cache';
 
+        // Retrieve user-chosen statuses or default to on-hold
+        $statuses = ! empty( $options['order_statuses'] ) && is_array( $options['order_statuses'] )
+            ? $options['order_statuses']
+            : array( 'wc-on-hold' );
+
         $cached_data = get_transient( $cache_key );
         if ( false !== $cached_data && is_array( $cached_data ) && ! empty( $cached_data ) ) {
             wp_send_json_success( $cached_data );
         }
 
-        // Query completed / processing orders
         $lookback_time = gmdate( 'Y-m-d H:i:s', time() - ( $order_hours * HOUR_IN_SECONDS ) );
 
+        // 1. Query within lookback window
         $orders = wc_get_orders( array(
             'limit'        => 15,
-            'status'       => array( 'wc-completed', 'wc-processing' ),
+            'status'       => $statuses,
             'date_created' => '>=' . $lookback_time,
             'orderby'      => 'date',
             'order'        => 'DESC',
             'return'       => 'objects',
         ) );
 
-        // If no orders within window, fallback to most recent orders
+        // 2. Fallback to newest orders of selected statuses if none exist within hours
         if ( empty( $orders ) ) {
             $orders = wc_get_orders( array(
                 'limit'   => 10,
-                'status'  => array( 'wc-completed', 'wc-processing' ),
+                'status'  => $statuses,
                 'orderby' => 'date',
                 'order'   => 'DESC',
                 'return'  => 'objects',
@@ -65,11 +70,11 @@ class WCLSP_Social_Proof_Ajax {
                 $buyer_name = $first_name;
             }
 
-            // Location formatting
+            // Location
             $city         = trim( $order->get_shipping_city() ?: $order->get_billing_city() );
             $country_code = strtoupper( trim( $order->get_shipping_country() ?: $order->get_billing_country() ) );
 
-            // Items & Smart Abbreviation
+            // Items
             $items       = $order->get_items();
             $items_count = count( $items );
             if ( $items_count === 0 ) {
@@ -85,7 +90,6 @@ class WCLSP_Social_Proof_Ajax {
             $first_title = $first_item->get_name();
             if ( $items_count > 1 ) {
                 $extra_items = $items_count - 1;
-                /* translators: 1: primary product name, 2: additional items count */
                 $product_label = sprintf(
                     _n( '%1$s and %2$d other item', '%1$s and %2$d other items', $extra_items, 'wc-lightweight-social-proof' ),
                     $first_title,
@@ -99,7 +103,7 @@ class WCLSP_Social_Proof_Ajax {
             $image_id  = $product->get_image_id();
             $image_url = $image_id ? wp_get_attachment_image_url( $image_id, 'thumbnail' ) : wc_placeholder_img_src( 'thumbnail' );
 
-            // Time difference calculation with smart cap
+            // Human Time Difference
             $order_date = $order->get_date_created();
             $now        = time();
             $diff       = $order_date ? ( $now - $order_date->getTimestamp() ) : 0;
@@ -114,7 +118,6 @@ class WCLSP_Social_Proof_Ajax {
                 $days     = round( $diff / 86400 );
                 $time_ago = sprintf( _n( '%d day ago', '%d days ago', $days, 'wc-lightweight-social-proof' ), $days );
             } else {
-                // If the order is older than 7 days, don't broadcast "1 year ago"
                 $time_ago = __( 'Recently', 'wc-lightweight-social-proof' );
             }
 
