@@ -140,7 +140,7 @@ class WCLSP_Social_Proof_Admin {
                 }
             }
         }
-        $sanitized['order_statuses'] = ! empty( $selected_statuses) ? $selected_statuses : array( 'wc-on-hold' );
+        $sanitized['order_statuses'] = ! empty( $selected_statuses ) ? $selected_statuses : array( 'wc-on-hold' );
         $sanitized['cache_minutes']  = absint( $input['cache_minutes'] ?? $defaults['cache_minutes'] );
 
         delete_transient( 'wclsp_social_proof_cache' );
@@ -245,8 +245,8 @@ class WCLSP_Social_Proof_Admin {
                                 <?php esc_html_e( 'Optional: Join the developer updates list to receive curated CSS styling presets, conversion optimization guides, and early access to new feature releases.', 'wc-lightweight-social-proof' ); ?>
                             </p>
 
-                            <!-- External Webhook or Newsletter Endpoint -->
-                            <form method="POST" action="https://formspree.io/f/YOUR_FORM_ID" target="_blank" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <!-- Self-Hosted Endpoint Form -->
+                            <form method="POST" action="https://michaelnnah.com/api/wclsp-leads.php" target="_blank" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
                                 <input type="text" name="name" value="<?php echo esc_attr( $current_user->display_name ); ?>" placeholder="<?php esc_attr_e( 'Your Name', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 170px;">
                                 
                                 <input type="email" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>" placeholder="<?php esc_attr_e( 'Your Email', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
