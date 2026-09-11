@@ -231,9 +231,9 @@ class WCLSP_Social_Proof_Admin {
 
             <?php if ( ! $is_dismissed ) : ?>
                 <!-- Optional, 100% WordPress.org Compliant Opt-In Card -->
-                <div class="wclsp-optin-card" style="margin: 20px 0 25px; padding: 22px 24px; background: #ffffff; border: 1px solid #c7d2fe; border-left: 4px solid #4f46e5; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative;">
-                    
-                    <a href="<?php echo esc_url( $dismiss_url ); ?>" title="<?php esc_attr_e( 'Dismiss this notice', 'wc-lightweight-social-proof' ); ?>" style="position: absolute; top: 14px; right: 16px; text-decoration: none; color: #94a3b8; font-size: 18px; font-weight: 700; line-height: 1;">&times;</a>
+                <div id="wclsp-optin-card" class="wclsp-optin-card" style="margin: 20px 0 25px; padding: 22px 24px; background: #ffffff; border: 1px solid #c7d2fe; border-left: 4px solid #4f46e5; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; transition: opacity 0.3s ease, height 0.3s ease;">
+
+                    <a href="<?php echo esc_url( $dismiss_url ); ?>" id="wclsp-close-btn" title="<?php esc_attr_e( 'Dismiss this notice', 'wc-lightweight-social-proof' ); ?>" style="position: absolute; top: 14px; right: 16px; text-decoration: none; color: #94a3b8; font-size: 18px; font-weight: 700; line-height: 1;">&times;</a>
 
                     <div style="display: flex; gap: 14px; align-items: flex-start;">
                         <span style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #eef2ff; color: #4f46e5; border-radius: 8px; font-size: 20px; flex-shrink: 0;">⚡</span>
@@ -245,30 +245,77 @@ class WCLSP_Social_Proof_Admin {
                                 <?php esc_html_e( 'Optional: Join the developer updates list to receive curated CSS styling presets, conversion optimization guides, and early access to new feature releases.', 'wc-lightweight-social-proof' ); ?>
                             </p>
 
-                            <!-- Self-Hosted Endpoint Form -->
-                            <form method="POST" action="https://michaelnnah.com/api/wclsp-leads.php" target="_blank" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
+                            <!-- AJAX Self-Hosted Lead Form -->
+                            <form id="wclsp-ajax-optin-form" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
                                 <input type="text" name="name" value="<?php echo esc_attr( $current_user->display_name ); ?>" placeholder="<?php esc_attr_e( 'Your Name', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 170px;">
-                                
+
                                 <input type="email" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>" placeholder="<?php esc_attr_e( 'Your Email', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
-                                
+
                                 <input type="hidden" name="domain" value="<?php echo esc_attr( $site_domain ); ?>">
                                 <input type="hidden" name="plugin_version" value="1.2.0">
 
-                                <button type="submit" class="button button-primary" style="height: 36px; line-height: 34px; padding: 0 16px; background: #4f46e5; border-color: #4f46e5; font-weight: 600;">
+                                <button type="submit" id="wclsp-submit-btn" class="button button-primary" style="height: 36px; line-height: 34px; padding: 0 16px; background: #4f46e5; border-color: #4f46e5; font-weight: 600;">
                                     <?php esc_html_e( 'Send Free Presets', 'wc-lightweight-social-proof' ); ?>
                                 </button>
-                                
+
                                 <a href="<?php echo esc_url( $dismiss_url ); ?>" class="button button-secondary" style="height: 36px; line-height: 34px; padding: 0 14px; color: #64748b;">
                                     <?php esc_html_e( 'No thanks, skip', 'wc-lightweight-social-proof' ); ?>
                                 </a>
                             </form>
-                            
+
+                            <div id="wclsp-feedback-status" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600;"></div>
+
                             <p style="margin: 8px 0 0; font-size: 11px; color: #94a3b8;">
                                 <?php esc_html_e( '🔒 We respect your privacy. No spam. You can unsubscribe at any time.', 'wc-lightweight-social-proof' ); ?>
                             </p>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const optinForm  = document.getElementById('wclsp-ajax-optin-form');
+                    const optinCard  = document.getElementById('wclsp-optin-card');
+                    const submitBtn  = document.getElementById('wclsp-submit-btn');
+                    const statusBox  = document.getElementById('wclsp-feedback-status');
+                    const dismissUrl = '<?php echo esc_url_raw( $dismiss_url ); ?>';
+
+                    if (optinForm) {
+                        optinForm.addEventListener('submit', function(e) {
+                            e.preventDefault();
+
+                            submitBtn.disabled = true;
+                            submitBtn.innerText = '<?php echo esc_js( __( 'Sending...', 'wc-lightweight-social-proof' ) ); ?>';
+
+                            const formData = new FormData(optinForm);
+
+                            fetch('https://michaelnnah.com/api/wclsp-leads.php', {
+                                method: 'POST',
+                                body: formData
+                            })
+                            .then(response => response.json())
+                            .then(data => {
+                                optinForm.style.display = 'none';
+                                statusBox.style.display = 'block';
+                                statusBox.style.color = '#16a34a';
+                                statusBox.textContent = '✅ <?php echo esc_js( __( 'Snippet package dispatched! Check your inbox shortly.', 'wc-lightweight-social-proof' ) ); ?>';
+
+                                // Dismiss banner in user meta after 2.5s
+                                setTimeout(function() {
+                                    window.location.href = dismissUrl;
+                                }, 2500);
+                            })
+                            .catch(error => {
+                                submitBtn.disabled = false;
+                                submitBtn.innerText = '<?php echo esc_js( __( 'Send Free Presets', 'wc-lightweight-social-proof' ) ); ?>';
+                                statusBox.style.display = 'block';
+                                statusBox.style.color = '#dc2626';
+                                statusBox.textContent = '❌ <?php echo esc_js( __( 'Could not dispatch. Please try again or skip.', 'wc-lightweight-social-proof' ) ); ?>';
+                            });
+                        });
+                    }
+                });
+                </script>
             <?php endif; ?>
 
             <form action="options.php" method="post">
