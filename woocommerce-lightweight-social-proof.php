@@ -21,11 +21,16 @@ define( 'WCLSP_VERSION', '1.2.0' );
 define( 'WCLSP_PATH', plugin_dir_path( __FILE__ ) );
 define( 'WCLSP_URL', plugin_dir_url( __FILE__ ) );
 
-// 1. Load classes immediately (just like it was when working)
+// 1. Load classes
 require_once WCLSP_PATH . 'includes/class-social-proof-ajax.php';
 require_once WCLSP_PATH . 'includes/class-social-proof-admin.php';
 
-// 2. Compatibility notice if WooCommerce is deactivated
+// 2. Initialize Admin settings
+if ( is_admin() && class_exists( 'WCLSP_Social_Proof_Admin' ) ) {
+    WCLSP_Social_Proof_Admin::init();
+}
+
+// 3. WooCommerce compatibility check
 add_action( 'admin_notices', 'wclsp_check_woocommerce_dependency' );
 
 function wclsp_check_woocommerce_dependency() {
