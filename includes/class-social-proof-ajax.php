@@ -63,7 +63,7 @@ class WCLSP_Social_Proof_Ajax {
             $last_name  = trim( $order->get_billing_last_name() );
 
             if ( empty( $first_name ) ) {
-                $buyer_name = __( 'Someone', 'wc-lightweight-social-proof' );
+                $buyer_name = __( 'Someone', 'lightweight-sales-popup-for-woo' );
             } elseif ( ! empty( $last_name ) ) {
                 $buyer_name = $first_name . ' ' . mb_substr( $last_name, 0, 1 ) . '.';
             } else {
@@ -91,7 +91,7 @@ class WCLSP_Social_Proof_Ajax {
             if ( $items_count > 1 ) {
                 $extra_items = $items_count - 1;
                 $product_label = sprintf(
-                    _n( '%1$s and %2$d other item', '%1$s and %2$d other items', $extra_items, 'wc-lightweight-social-proof' ),
+                    _n( '%1$s and %2$d other item', '%1$s and %2$d other items', $extra_items, 'lightweight-sales-popup-for-woo' ),
                     $first_title,
                     $extra_items
                 );
@@ -110,15 +110,15 @@ class WCLSP_Social_Proof_Ajax {
 
             if ( $diff < 3600 ) {
                 $mins     = max( 1, round( $diff / 60 ) );
-                $time_ago = sprintf( _n( '%d minute ago', '%d minutes ago', $mins, 'wc-lightweight-social-proof' ), $mins );
+                $time_ago = sprintf( _n( '%d minute ago', '%d minutes ago', $mins, 'lightweight-sales-popup-for-woo' ), $mins );
             } elseif ( $diff < 86400 ) {
                 $hours    = round( $diff / 3600 );
-                $time_ago = sprintf( _n( '%d hour ago', '%d hours ago', $hours, 'wc-lightweight-social-proof' ), $hours );
+                $time_ago = sprintf( _n( '%d hour ago', '%d hours ago', $hours, 'lightweight-sales-popup-for-woo' ), $hours );
             } elseif ( $diff < ( 86400 * 7 ) ) {
                 $days     = round( $diff / 86400 );
-                $time_ago = sprintf( _n( '%d day ago', '%d days ago', $days, 'wc-lightweight-social-proof' ), $days );
+                $time_ago = sprintf( _n( '%d day ago', '%d days ago', $days, 'lightweight-sales-popup-for-woo' ), $days );
             } else {
-                $time_ago = __( 'Recently', 'wc-lightweight-social-proof' );
+                $time_ago = __( 'Recently', 'lightweight-sales-popup-for-woo' );
             }
 
             $sales_data[] = array(

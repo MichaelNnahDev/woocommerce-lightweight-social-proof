@@ -53,8 +53,8 @@ class WCLSP_Social_Proof_Admin {
     public static function add_settings_page() {
         add_submenu_page(
             'woocommerce',
-            __( 'Social Proof Settings', 'wc-lightweight-social-proof' ),
-            __( 'Social Proof', 'wc-lightweight-social-proof' ),
+            __( 'Social Proof Settings', 'lightweight-sales-popup-for-woo' ),
+            __( 'Social Proof', 'lightweight-sales-popup-for-woo' ),
             'manage_woocommerce',
             'wclsp-settings',
             array( __CLASS__, 'render_settings_page' )
@@ -67,38 +67,38 @@ class WCLSP_Social_Proof_Admin {
         ) );
 
         // 1. Visual & Styling
-        add_settings_section( 'wclsp_style_section', __( 'Visual & Styling', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
-        add_settings_field( 'bg_color', __( 'Background Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color', 'desc' => 'Default: #151515' ) );
-        add_settings_field( 'text_color', __( 'Text Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color', 'desc' => 'Default: #ffffff' ) );
-        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color', 'desc' => 'Default: #D4AF37 (Metallic Gold)' ) );
-        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color', 'desc' => 'Default: #25D366' ) );
-        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'e.g. "Mulish", sans-serif or "inherit"' ) );
+        add_settings_section( 'wclsp_style_section', __( 'Visual & Styling', 'lightweight-sales-popup-for-woo' ), '__return_empty_string', 'wclsp-settings' );
+        add_settings_field( 'bg_color', __( 'Background Color', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'bg_color', 'desc' => 'Default: #151515' ) );
+        add_settings_field( 'text_color', __( 'Text Color', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'text_color', 'desc' => 'Default: #ffffff' ) );
+        add_settings_field( 'accent_color', __( 'Accent / Highlight Color', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'accent_color', 'desc' => 'Default: #D4AF37 (Metallic Gold)' ) );
+        add_settings_field( 'badge_color', __( 'Verified Badge Color', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_color' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'badge_color', 'desc' => 'Default: #25D366' ) );
+        add_settings_field( 'font_family', __( 'Font Family (CSS)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_text' ), 'wclsp-settings', 'wclsp_style_section', array( 'id' => 'font_family', 'desc' => 'e.g. "Mulish", sans-serif or "inherit"' ) );
 
         // 2. Position & Layout
-        add_settings_section( 'wclsp_position_section', __( 'Position & Layout', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
-        add_settings_field( 'position_desktop', __( 'Desktop Position', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_select' ), 'wclsp-settings', 'wclsp_position_section', array(
+        add_settings_section( 'wclsp_position_section', __( 'Position & Layout', 'lightweight-sales-popup-for-woo' ), '__return_empty_string', 'wclsp-settings' );
+        add_settings_field( 'position_desktop', __( 'Desktop Position', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_select' ), 'wclsp-settings', 'wclsp_position_section', array(
             'id'      => 'position_desktop',
             'options' => array(
-                'bottom-left'  => __( 'Bottom Left', 'wc-lightweight-social-proof' ),
-                'bottom-right' => __( 'Bottom Right', 'wc-lightweight-social-proof' ),
+                'bottom-left'  => __( 'Bottom Left', 'lightweight-sales-popup-for-woo' ),
+                'bottom-right' => __( 'Bottom Right', 'lightweight-sales-popup-for-woo' ),
             ),
         ) );
-        add_settings_field( 'bottom_offset_desk', __( 'Desktop Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_desk', 'min' => 0, 'max' => 300 ) );
-        add_settings_field( 'bottom_offset_mob', __( 'Mobile Bottom Offset (px)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_mob', 'min' => 0, 'max' => 300 ) );
-        add_settings_field( 'mobile_scale', __( 'Mobile Size Scale (%)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'mobile_scale', 'min' => 60, 'max' => 110 ) );
+        add_settings_field( 'bottom_offset_desk', __( 'Desktop Bottom Offset (px)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_desk', 'min' => 0, 'max' => 300 ) );
+        add_settings_field( 'bottom_offset_mob', __( 'Mobile Bottom Offset (px)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'bottom_offset_mob', 'min' => 0, 'max' => 300 ) );
+        add_settings_field( 'mobile_scale', __( 'Mobile Size Scale (%)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_position_section', array( 'id' => 'mobile_scale', 'min' => 60, 'max' => 110 ) );
 
         // 3. Timing & Behavior
-        add_settings_section( 'wclsp_behavior_section', __( 'Timing & Behavior', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
-        add_settings_field( 'initial_delay', __( 'Initial Delay (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'initial_delay', 'min' => 1, 'max' => 60 ) );
-        add_settings_field( 'display_duration', __( 'Display Duration (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'display_duration', 'min' => 2, 'max' => 30 ) );
-        add_settings_field( 'min_interval', __( 'Minimum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'min_interval', 'min' => 5, 'max' => 300 ) );
-        add_settings_field( 'max_interval', __( 'Maximum Interval (seconds)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'max_interval', 'min' => 5, 'max' => 300 ) );
+        add_settings_section( 'wclsp_behavior_section', __( 'Timing & Behavior', 'lightweight-sales-popup-for-woo' ), '__return_empty_string', 'wclsp-settings' );
+        add_settings_field( 'initial_delay', __( 'Initial Delay (seconds)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'initial_delay', 'min' => 1, 'max' => 60 ) );
+        add_settings_field( 'display_duration', __( 'Display Duration (seconds)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'display_duration', 'min' => 2, 'max' => 30 ) );
+        add_settings_field( 'min_interval', __( 'Minimum Interval (seconds)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'min_interval', 'min' => 5, 'max' => 300 ) );
+        add_settings_field( 'max_interval', __( 'Maximum Interval (seconds)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_behavior_section', array( 'id' => 'max_interval', 'min' => 5, 'max' => 300 ) );
 
         // 4. Query & Cache
-        add_settings_section( 'wclsp_query_section', __( 'Query & Cache Settings', 'wc-lightweight-social-proof' ), '__return_empty_string', 'wclsp-settings' );
-        add_settings_field( 'order_hours', __( 'Order History Scope (hours)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_hours', 'min' => 1, 'max' => 720 ) );
-        add_settings_field( 'order_statuses', __( 'Included Order Statuses', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_statuses' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_statuses' ) );
-        add_settings_field( 'cache_minutes', __( 'Transient Cache Lifetime (minutes)', 'wc-lightweight-social-proof' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'cache_minutes', 'min' => 1, 'max' => 120 ) );
+        add_settings_section( 'wclsp_query_section', __( 'Query & Cache Settings', 'lightweight-sales-popup-for-woo' ), '__return_empty_string', 'wclsp-settings' );
+        add_settings_field( 'order_hours', __( 'Order History Scope (hours)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_hours', 'min' => 1, 'max' => 720 ) );
+        add_settings_field( 'order_statuses', __( 'Included Order Statuses', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_statuses' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'order_statuses' ) );
+        add_settings_field( 'cache_minutes', __( 'Transient Cache Lifetime (minutes)', 'lightweight-sales-popup-for-woo' ), array( __CLASS__, 'field_number' ), 'wclsp-settings', 'wclsp_query_section', array( 'id' => 'cache_minutes', 'min' => 1, 'max' => 120 ) );
     }
 
     public static function sanitize_settings( $input ) {
@@ -198,10 +198,10 @@ class WCLSP_Social_Proof_Admin {
         $opts      = self::get_options();
         $selected  = (array) ( $opts['order_statuses'] ?? array( 'wc-on-hold' ) );
         $statuses  = array(
-            'wc-on-hold'    => __( 'On hold (Default)', 'wc-lightweight-social-proof' ),
-            'wc-pending'    => __( 'Pending payment', 'wc-lightweight-social-proof' ),
-            'wc-processing' => __( 'Processing', 'wc-lightweight-social-proof' ),
-            'wc-completed'  => __( 'Completed', 'wc-lightweight-social-proof' ),
+            'wc-on-hold'    => __( 'On hold (Default)', 'lightweight-sales-popup-for-woo' ),
+            'wc-pending'    => __( 'Pending payment', 'lightweight-sales-popup-for-woo' ),
+            'wc-processing' => __( 'Processing', 'lightweight-sales-popup-for-woo' ),
+            'wc-completed'  => __( 'Completed', 'lightweight-sales-popup-for-woo' ),
         );
 
         echo '<fieldset style="display:flex; flex-direction:column; gap:6px;">';
@@ -227,46 +227,46 @@ class WCLSP_Social_Proof_Admin {
         $dismiss_url  = wp_nonce_url( add_query_arg( 'wclsp_dismiss_optin', '1' ), 'wclsp_dismiss_optin_nonce' );
         ?>
         <div class="wrap" style="max-width: 900px;">
-            <h1><?php esc_html_e( 'WooCommerce Sales Popup Settings', 'wc-lightweight-social-proof' ); ?></h1>
+            <h1><?php esc_html_e( 'WooCommerce Sales Popup Settings', 'lightweight-sales-popup-for-woo' ); ?></h1>
 
             <?php if ( ! $is_dismissed ) : ?>
                 <!-- Optional, 100% WordPress.org Compliant Opt-In Card -->
                 <div id="wclsp-optin-card" class="wclsp-optin-card" style="margin: 20px 0 25px; padding: 22px 24px; background: #ffffff; border: 1px solid #c7d2fe; border-left: 4px solid #4f46e5; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); position: relative; transition: opacity 0.3s ease, height 0.3s ease;">
 
-                    <a href="<?php echo esc_url( $dismiss_url ); ?>" id="wclsp-close-btn" title="<?php esc_attr_e( 'Dismiss this notice', 'wc-lightweight-social-proof' ); ?>" style="position: absolute; top: 14px; right: 16px; text-decoration: none; color: #94a3b8; font-size: 18px; font-weight: 700; line-height: 1;">&times;</a>
+                    <a href="<?php echo esc_url( $dismiss_url ); ?>" id="wclsp-close-btn" title="<?php esc_attr_e( 'Dismiss this notice', 'lightweight-sales-popup-for-woo' ); ?>" style="position: absolute; top: 14px; right: 16px; text-decoration: none; color: #94a3b8; font-size: 18px; font-weight: 700; line-height: 1;">&times;</a>
 
                     <div style="display: flex; gap: 14px; align-items: flex-start;">
                         <span style="display: inline-flex; align-items: center; justify-content: center; width: 38px; height: 38px; background: #eef2ff; color: #4f46e5; border-radius: 8px; font-size: 20px; flex-shrink: 0;">⚡</span>
                         <div style="flex-grow: 1;">
                             <h2 style="margin: 0 0 6px; font-size: 16px; font-weight: 700; color: #0f172a;">
-                                <?php esc_html_e( 'Get Free Styling Presets & Feature Updates', 'wc-lightweight-social-proof' ); ?>
+                                <?php esc_html_e( 'Get Free Styling Presets & Feature Updates', 'lightweight-sales-popup-for-woo' ); ?>
                             </h2>
                             <p style="margin: 0 0 14px; font-size: 13px; line-height: 1.5; color: #475569;">
-                                <?php esc_html_e( 'Optional: Join the developer updates list to receive curated CSS styling presets, conversion optimization guides, and early access to new feature releases.', 'wc-lightweight-social-proof' ); ?>
+                                <?php esc_html_e( 'Optional: Join the developer updates list to receive curated CSS styling presets, conversion optimization guides, and early access to new feature releases.', 'lightweight-sales-popup-for-woo' ); ?>
                             </p>
 
                             <!-- AJAX Self-Hosted Lead Form -->
                             <form id="wclsp-ajax-optin-form" style="display: flex; flex-wrap: wrap; gap: 10px; align-items: center;">
-                                <input type="text" name="name" value="<?php echo esc_attr( $current_user->display_name ); ?>" placeholder="<?php esc_attr_e( 'Your Name', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 170px;">
+                                <input type="text" name="name" value="<?php echo esc_attr( $current_user->display_name ); ?>" placeholder="<?php esc_attr_e( 'Your Name', 'lightweight-sales-popup-for-woo' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 170px;">
 
-                                <input type="email" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>" placeholder="<?php esc_attr_e( 'Your Email', 'wc-lightweight-social-proof' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
+                                <input type="email" name="email" value="<?php echo esc_attr( $current_user->user_email ); ?>" placeholder="<?php esc_attr_e( 'Your Email', 'lightweight-sales-popup-for-woo' ); ?>" required style="height: 36px; padding: 0 12px; font-size: 13px; border: 1px solid #cbd5e1; border-radius: 6px; width: 220px;">
 
                                 <input type="hidden" name="domain" value="<?php echo esc_attr( $site_domain ); ?>">
                                 <input type="hidden" name="plugin_version" value="1.2.0">
 
                                 <button type="submit" id="wclsp-submit-btn" class="button button-primary" style="height: 36px; line-height: 34px; padding: 0 16px; background: #4f46e5; border-color: #4f46e5; font-weight: 600;">
-                                    <?php esc_html_e( 'Send Free Presets', 'wc-lightweight-social-proof' ); ?>
+                                    <?php esc_html_e( 'Send Free Presets', 'lightweight-sales-popup-for-woo' ); ?>
                                 </button>
 
                                 <a href="<?php echo esc_url( $dismiss_url ); ?>" class="button button-secondary" style="height: 36px; line-height: 34px; padding: 0 14px; color: #64748b;">
-                                    <?php esc_html_e( 'No thanks, skip', 'wc-lightweight-social-proof' ); ?>
+                                    <?php esc_html_e( 'No thanks, skip', 'lightweight-sales-popup-for-woo' ); ?>
                                 </a>
                             </form>
 
                             <div id="wclsp-feedback-status" style="display: none; margin-top: 10px; font-size: 13px; font-weight: 600;"></div>
 
                             <p style="margin: 8px 0 0; font-size: 11px; color: #94a3b8;">
-                                <?php esc_html_e( '🔒 We respect your privacy. No spam. You can unsubscribe at any time.', 'wc-lightweight-social-proof' ); ?>
+                                <?php esc_html_e( '🔒 We respect your privacy. No spam. You can unsubscribe at any time.', 'lightweight-sales-popup-for-woo' ); ?>
                             </p>
                         </div>
                     </div>
@@ -285,7 +285,7 @@ class WCLSP_Social_Proof_Admin {
                             e.preventDefault();
 
                             submitBtn.disabled = true;
-                            submitBtn.innerText = '<?php echo esc_js( __( 'Sending...', 'wc-lightweight-social-proof' ) ); ?>';
+                            submitBtn.innerText = '<?php echo esc_js( __( 'Sending...', 'lightweight-sales-popup-for-woo' ) ); ?>';
 
                             const formData = new FormData(optinForm);
 
@@ -298,7 +298,7 @@ class WCLSP_Social_Proof_Admin {
                                 optinForm.style.display = 'none';
                                 statusBox.style.display = 'block';
                                 statusBox.style.color = '#16a34a';
-                                statusBox.textContent = '✅ <?php echo esc_js( __( 'Snippet package dispatched! Check your inbox shortly.', 'wc-lightweight-social-proof' ) ); ?>';
+                                statusBox.textContent = '✅ <?php echo esc_js( __( 'Snippet package dispatched! Check your inbox shortly.', 'lightweight-sales-popup-for-woo' ) ); ?>';
 
                                 // Dismiss banner in user meta after 2.5s
                                 setTimeout(function() {
@@ -307,10 +307,10 @@ class WCLSP_Social_Proof_Admin {
                             })
                             .catch(error => {
                                 submitBtn.disabled = false;
-                                submitBtn.innerText = '<?php echo esc_js( __( 'Send Free Presets', 'wc-lightweight-social-proof' ) ); ?>';
+                                submitBtn.innerText = '<?php echo esc_js( __( 'Send Free Presets', 'lightweight-sales-popup-for-woo' ) ); ?>';
                                 statusBox.style.display = 'block';
                                 statusBox.style.color = '#dc2626';
-                                statusBox.textContent = '❌ <?php echo esc_js( __( 'Could not dispatch. Please try again or skip.', 'wc-lightweight-social-proof' ) ); ?>';
+                                statusBox.textContent = '❌ <?php echo esc_js( __( 'Could not dispatch. Please try again or skip.', 'lightweight-sales-popup-for-woo' ) ); ?>';
                             });
                         });
                     }
@@ -322,7 +322,7 @@ class WCLSP_Social_Proof_Admin {
                 <?php
                 settings_fields( 'wclsp_settings_group' );
                 do_settings_sections( 'wclsp-settings' );
-                submit_button( __( 'Save Changes', 'wc-lightweight-social-proof' ) );
+                submit_button( __( 'Save Changes', 'lightweight-sales-popup-for-woo' ) );
                 ?>
             </form>
         </div>

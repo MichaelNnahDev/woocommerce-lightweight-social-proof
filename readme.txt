@@ -1,9 +1,9 @@
-=== Lightweight Sales Popup for Woo – Live Sales Notification & Social Proof ===
+=== Lightweight Sales Popup for Woo ===
 Contributors: michaelnnahdev
 Donate link: https://portfolio.michaelnnah.com/
 Tags: sales-popup, sales-notification, social-proof, recent-sales, ecommerce
 Requires at least: 6.0
-Tested up to: 6.8
+Tested up to: 7.1
 Requires PHP: 7.4
 Stable tag: 1.2.0
 License: GPLv2 or later

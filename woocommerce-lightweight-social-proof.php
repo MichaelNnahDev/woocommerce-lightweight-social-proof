@@ -10,7 +10,7 @@
  * Author URI:        https://michaelnnah.com
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       wc-lightweight-social-proof
+ * Text Domain:       lightweight-sales-popup-for-woo
  */
 
 if ( ! defined( 'ABSPATH' ) ) {
