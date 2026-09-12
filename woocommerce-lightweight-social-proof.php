@@ -26,14 +26,19 @@ add_action( 'plugins_loaded', 'wclsp_bootstrap_plugin' );
 
 function wclsp_bootstrap_plugin() {
     // Check if WooCommerce is installed and active
-    if ( ! class_exists( 'WooCommerce' ) ) {
+    if ( ! class_exists( 'WooCommerce' ) && ! in_array( 'woocommerce/woocommerce.php', apply_filters( 'active_plugins', get_option( 'active_plugins' ) ) ) ) {
         add_action( 'admin_notices', 'wclsp_missing_woocommerce_notice' );
         return;
     }
 
-    // Load classes safely only when WooCommerce is present
+    // 1. Load the AJAX / frontend class
     require_once WCLSP_PATH . 'includes/class-social-proof-ajax.php';
+
+    // 2. Load and instantiate Admin settings
     require_once WCLSP_PATH . 'includes/class-social-proof-admin.php';
+    if ( is_admin() && class_exists( 'WCLSP_Admin' ) ) {
+        new WCLSP_Admin();
+    }
 }
 
 /**
@@ -45,7 +50,7 @@ function wclsp_missing_woocommerce_notice() {
     }
     ?>
     <div class="notice notice-error is-dismissible">
-        <p><strong>Lightweight Sales Popup for Woo</strong> requires <strong>WooCommerce</strong> to be installed and activated. Please install and activate WooCommerce to enable social proof notifications.</p>
+        <p><strong>Lightweight Sales Popup for Woo</strong> requires <strong>WooCommerce</strong> to be installed and activated.</p>
     </div>
     <?php
 }
